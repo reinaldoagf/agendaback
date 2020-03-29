@@ -85,8 +85,8 @@ class ContactController extends Controller
                 if ($request->hasFile('photo')) {
                     $photo = $request->file('photo');
                     $filename = time() . '.' . $photo->getClientOriginalExtension();
-                    Image::make($photo)->save(public_path('files/' . $filename));
-                    $contact->photo=public_path('files/' . $filename);
+                    Image::make($photo)->save(public_path($filename));                    
+                    $contact->photo= asset($filename);
                 }
             }
             $contact->save();
@@ -141,8 +141,8 @@ class ContactController extends Controller
                 if ($request->hasFile('photo')) {
                     $photo = $request->file('photo');
                     $filename = time() . '.' . $photo->getClientOriginalExtension();
-                    Image::make($photo)->save(public_path('files/' . $filename));
-                    $contact->photo=public_path('files/' . $filename);
+                    Image::make($photo)->save(public_path($filename));
+                    $contact->photo= asset($filename);
                 }
             }
             $response = [
