@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 use App\Contact;
+use Image;
 class ContactController extends Controller
 {
     //
@@ -78,7 +80,15 @@ class ContactController extends Controller
             $contact->address=$request->get('address');
             $contact->phone=$request->get('phone');
             $contact->email=$request->get('email');
-            // $contact->photo="";
+            //photo
+            if (!is_null($request->photo)) {
+                if ($request->hasFile('photo')) {
+                    $photo = $request->file('photo');
+                    $filename = time() . '.' . $photo->getClientOriginalExtension();
+                    Image::make($photo)->save(public_path('files/' . $filename));
+                    $contact->photo=public_path('files/' . $filename);
+                }
+            }
             $contact->save();
             $response = [
                 'message'=> 'Contacto registrado satisfactoriamente',
@@ -126,6 +136,15 @@ class ContactController extends Controller
                 return response()->json(['message'=>'Contacto no existente'],404);
             }
             $contact->fill($request->all());
+            //photo
+            if (!is_null($request->photo)) {
+                if ($request->hasFile('photo')) {
+                    $photo = $request->file('photo');
+                    $filename = time() . '.' . $photo->getClientOriginalExtension();
+                    Image::make($photo)->save(public_path('files/' . $filename));
+                    $contact->photo=public_path('files/' . $filename);
+                }
+            }
             $response = [
                 'message'=> 'Contacto actualizado satisfactoriamente',
                 'data' => $contact,
@@ -148,7 +167,7 @@ class ContactController extends Controller
             }
             $response = [
                 'message'=> 'Contacto eliminado satisfactoriamente',
-                'data' => $contact,
+                'data' => $id,
             ];
             $contact->delete();
             return response()->json($response, 200);
